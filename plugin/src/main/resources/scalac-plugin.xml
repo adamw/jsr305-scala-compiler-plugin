@@ -1,0 +1,8 @@
+<!--<plugin>-->
+    <!--<name>divbyzero</name>-->
+    <!--<classname>DivByZero</classname>-->
+<!--</plugin>-->
+<plugin>
+    <name>annotations</name>
+    <classname>AnnotationsPlugin</classname>
+</plugin>
