@@ -13,11 +13,4 @@ object Example1 {
   def main(args: Array[String]) {
     parameterMustBeNull(null)(null)
   }
-
-  def test(@Nonnull param: Object) {
-    if (param == null) {
-      throw new IllegalArgumentException("param ")
-    }
-    3
-  }
 }
