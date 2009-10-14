@@ -4,6 +4,9 @@ import nsc.plugins.Plugin
 import nsc.plugins.PluginComponent
 import nsc.transform.Transform
 
+/**
+ * @author Adam Warski (adam at warski dot org)
+ */
 class AnnotationsCheckGenPlugin(val global: Global) extends Plugin {
   val name = "annotations-check-gen"
   val description = "generates code which checks if method parameters annotated with nonnull are not null"
@@ -11,7 +14,7 @@ class AnnotationsCheckGenPlugin(val global: Global) extends Plugin {
 
   private object AnnotationsCheckGenComponent extends PluginComponent with Transform {
     val global: AnnotationsCheckGenPlugin.this.global.type = AnnotationsCheckGenPlugin.this.global
-    val runsAfter = "parser"  // erasure phase throws NPE
+    val runsAfter = "parser" 
     // Using the Scala Compiler 2.8.x the runsAfter should be written as below
     // val runsAfter = List[String]("parser");
     val phaseName = AnnotationsCheckGenPlugin.this.name
@@ -35,17 +38,17 @@ class AnnotationsCheckGenPlugin(val global: Global) extends Plugin {
 
                 // For each non-null variable, generating and adding a check to the body of the method
                 nonnullParameters foreach { param =>
-                  var nonnullCheck: global.Tree = createNonnullCheck(param)
-                  nonnullCheck = global.posAssigner.atPos(tree.pos)(nonnullCheck)
+                  val nonnullCheck = createNonnullCheck(param)
+                  val nonnullCheckWithPos = global.posAssigner.atPos(tree.pos)(nonnullCheck)
 
-                  block = block + nonnullCheck
+                  block = block + nonnullCheckWithPos
                 }
 
                 // Returning the tree with the block element substituted with the modified one
                 val result = new global.Transformer {
                   override def transform(tree: global.Tree) = {
                     tree match {
-                      case global.Block(_, _) => block //global.copy.Block(tree, block.stats, block.expr) 
+                      case global.Block(_, _) => block
                       case t => super.transform(t)
                     }
                   }
@@ -72,6 +75,10 @@ class AnnotationsCheckGenPlugin(val global: Global) extends Plugin {
         }
       }
 
+      /**
+       * Creates a nonnull check for the given parameter. 
+       * @return A {@code Tree} checking that the given parameter is not null.
+       */
       private def createNonnullCheck(param: global.ValDef) = {
         // Getting the name of the parameter
 
@@ -98,6 +105,11 @@ class AnnotationsCheckGenPlugin(val global: Global) extends Plugin {
           global.EmptyTree)
       }
 
+      /**
+       * In the given list of parameters, looks for parameters annotated with a nonnull annotation, that
+       * is any annotation that matches the "{@code No[nt][Nn]ull} regexp.
+       * @return The list of parameters which are annotated with a nonnull annotation.
+       */
       private def findNonnullParameters(vparamss: List[List[global.ValDef]]) = {
         vparamss.flatten[global.ValDef].filter(param => {
           // Checking if the parameter contains a non-null annotation
