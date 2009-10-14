@@ -4,21 +4,21 @@ import nsc.plugins.Plugin
 import nsc.plugins.PluginComponent
 import nsc.transform.Transform
 
-class AnnotationsPlugin(val global: Global) extends Plugin {
+class AnnotationsCheckGenPlugin(val global: Global) extends Plugin {
   val name = "annotations-check-gen"
   val description = "generates code which checks if method parameters annotated with nonnull are not null"
-  val components = List[PluginComponent](AnnotationsComponent)
+  val components = List[PluginComponent](AnnotationsCheckGenComponent)
 
-  private object AnnotationsComponent extends PluginComponent with Transform {
-    val global: AnnotationsPlugin.this.global.type = AnnotationsPlugin.this.global
+  private object AnnotationsCheckGenComponent extends PluginComponent with Transform {
+    val global: AnnotationsCheckGenPlugin.this.global.type = AnnotationsCheckGenPlugin.this.global
     val runsAfter = "parser"  // erasure phase throws NPE
     // Using the Scala Compiler 2.8.x the runsAfter should be written as below
     // val runsAfter = List[String]("parser");
-    val phaseName = AnnotationsPlugin.this.name
+    val phaseName = AnnotationsCheckGenPlugin.this.name
 
-    def newTransformer(unit: global.CompilationUnit) = AnnotationsTransformer
+    def newTransformer(unit: global.CompilationUnit) = AnnotationsCheckGenTransformer
 
-    object AnnotationsTransformer extends global.Transformer {
+    object AnnotationsCheckGenTransformer extends global.Transformer {
       override def transform(tree: global.Tree) = {
         tree match {
           case dd @ global.DefDef(_, _, _, vparamss, _, _) => {

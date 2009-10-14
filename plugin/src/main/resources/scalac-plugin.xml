@@ -3,6 +3,6 @@
     <!--<classname>DivByZero</classname>-->
 <!--</plugin>-->
 <plugin>
-    <name>annotations</name>
-    <classname>AnnotationsPlugin</classname>
+    <name>annotations-check-gen</name>
+    <classname>AnnotationsCheckGenPlugin</classname>
 </plugin>
