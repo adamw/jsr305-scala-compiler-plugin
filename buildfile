@@ -45,8 +45,9 @@ define "scala-plugin" do
 
         # And invoking scala
         checkResults({
-            #"scalac -Xplugin:#{packageName} #{basePluginTestPath}/Example0.scala" => "definitely division by zero",
-            "scalac -d #{targetPath} -cp #{jsr305dep} -Xplugin:#{packageName} #{basePluginTestPath}/Example1.scala" => "",
+            # We have to compile the example and run it, the result should throw an exception 
+            "scalac -d #{targetPath} -cp #{jsr305dep} -Xplugin:#{packageName} #{basePluginTestPath}/Example1.scala; " +
+            "cd #{targetPath}; scala Example1" => "java.lang.IllegalArgumentException: Parameter 'parameter' should not be null.",
         })
     end
   end
@@ -58,9 +59,8 @@ def checkResults(commandsToResults)
         puts "Checking the result for command '#{command}'..."
 
         result = `#{command} 2>&1`
-        puts result
-        #if !result.include? commandsToResults[command]
-        #    fail "Command '#{command}' result should contain:\n#{commandsToResults[command]}\nbut was:\n#{result}"
-        #end
+        if !result.include? commandsToResults[command]
+            fail "Command '#{command}' result should contain:\n#{commandsToResults[command]}\nbut was:\n#{result}"
+        end
     end
 end
