@@ -1,7 +1,3 @@
-<!--<plugin>-->
-    <!--<name>divbyzero</name>-->
-    <!--<classname>DivByZero</classname>-->
-<!--</plugin>-->
 <plugin>
     <name>annotations-check-gen</name>
     <classname>AnnotationsCheckGenPlugin</classname>
